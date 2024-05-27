@@ -11,7 +11,7 @@
   <body>
 {{--    @include('back.sidebar')--}}
 
-{{--        @include('back.messages')--}}
+{{--        @include('back.messages.blade.php')--}}
         <div class="container" style="margin-top: 170x" id="sidebar">
           <div class="panel panel-primary">
             <div class="panel-heading"> <a href="{{route('admin.categories.create')}}" class="btn btn-success btn-fw  ">دسته

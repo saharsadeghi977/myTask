@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('type',['image','document','video','audio',]);
             $table->string('file_name');
             $table->string('path');
+            $table->string('storage');
             $table->morphs('fileable');
             $table->timestamps();
 

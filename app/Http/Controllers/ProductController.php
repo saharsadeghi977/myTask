@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Repositories\FileRepository;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Services\AttachmentService;
@@ -38,7 +39,12 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $product=Product::query()->create($request->validated());
-        $image=AttachmentService::uploadFile($request,Product::class,$product->id);
+        $attachmentServices=AttachmentService::instance();
+        $savedFiles=$attachmentServices->uploadFile($request->files);
+        $fileRepository=new FileRepository();
+        foreach ($savedFiles as $file){
+            $fileRepository->create();
+        }
         return redirect(route('products',['product'=>$product->slug]));
 
     }
@@ -75,7 +81,7 @@ class ProductController extends Controller
 //                AttachmentService::remove(image);
 //            }
 //        }
-//        AttachmentService::uploadFile($request->file('files'), Product::class, $product->id);
+//        AttachmentService::uploadFileRepository($request->file('files'), Product::class, $product->id);
 //        }
 
 

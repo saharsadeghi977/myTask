@@ -19,7 +19,7 @@
         "
       >
 
-        @include('back.message')
+        @include('messages')
         <div class="container" style="margin-top: 170x" id="sidebar">
           <div class="panel panel-primary">
 

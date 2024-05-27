@@ -10,7 +10,7 @@
   <body>
     {{-- @include('back.sidebar') --}}
 
-{{--        @include('messages')--}}
+       @include('messages')
         <div class="container" style="margin-top: 170x" id="sidebar">
           <div class="panel panel-primary">
             <div class="panel-heading">لیست محصولات</div>
@@ -33,14 +33,14 @@
                     <tr style="padding-block: 10px;border-bottom: 1px solid rgb(196, 196, 196);">
 
                         <td style="padding-block: 10px;text-align: center;">{{$product->name}}</td>
-                        <td style="padding-block: 10px;text-align: center;">{{$priduct->title}}</td>
-                        <td style="padding-block: 10px;text-align: center;"><img src="{{url()->asset("storage/".$product->image)}}"></td>
+                        <td style="padding-block: 10px;text-align: center;">{{$product->title}}</td>
+                        <td style="padding-block: 10px;text-align: center;"><img src="{{asset('storage/'.$product->image)}}"></td>
                          <td style="padding-block: 10px;text-align: center;">
-                          @foreach ($product->categories()->pluck('name') as $category)
+                          @foreach ($product->category()->pluck('name') as $category)
                           <span class="badge badge-warning">{{$category}}</span>
                           @endforeach
                         </td>
-                        <td style="padding-block: 10px;text-align: center;">    <a href="{{route('products.edit',$product->id)}}"
+                        <td style="padding-block: 10px;text-align: center;"> <a href="{{route('products.edit',$product->id)}}"
                           class="badge badge-success">ویرایش</a>
                       <a href="{{route('products.destroy',$product->id)}}"
                           onclick="return confirm('آیا آیتم مورد نظر حذف شود');"

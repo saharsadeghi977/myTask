@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Services;
-
+use App\Http\Requests\ValidationFileRequest;
 use App\Exceptions\UndefinedStoragesException;
+use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
@@ -18,12 +19,14 @@ class AttachmentService
     /**
      * @var array
      */
-    private array $storages;
+    private array $storages=['public'];
+
 
 
     /**
      * @return self
      */
+
     public static function instance(): self
     {
         return self::$instance ??= new self();
@@ -34,6 +37,7 @@ class AttachmentService
      * @return bool
      * @throws Throwable
      */
+
     public function delete(string $file): bool
     {
         if (blank($file)) {
@@ -43,7 +47,8 @@ class AttachmentService
         $storages = $this->getStorages();
 
         foreach ($storages as $storage) {
-            $storageDisk = Storage::disk($storage);
+           $storageDisk = Storage::disk($storage);
+
             $deleteLog = $storageDisk->exists($file) && $storageDisk->delete($file);
         }
 
@@ -52,37 +57,31 @@ class AttachmentService
 
     public function uploadFiles(array $files): array
     {
-        $savedFiles = [];
-        foreach ($files as $file) {
-            $savedFiles = array_merge($savedFiles, $this->uploadFile($file));
-        }
-
-        return $savedFiles;
+     return array_map([$this,'uploadFile'],$files);
     }
 
     /**
-     * @param $file
-     * @return array
+     * @param $request
      * @throws Throwable
      */
-    public function uploadFile($file): array
-    {
-        $savedFiles = [];
-        $directory = date('Y/m/d');
-        $extension = $file->getClientOriginalExtension();
-        $randomName = md5(Str::random(5) . now()->toDateTimeString());
-        $fileName = "{$randomName}.{$extension}";
-        $fileMimeType = $file->getMimeType();
-        foreach ($this->getStorages() as $storage) {
-            $savedFiles = array_merge($savedFiles, [
-                'file' => Storage::disk($storage)->putFileAs($directory, $file, $fileName),
-                'type' => $fileMimeType,
-                'extension' => $extension,
-                'storage' => $storage
-            ]);
-        }
 
-        return $savedFiles;
+    public function uploadFile( ValidationFileRequest $request,$product):void
+    {
+
+        $file=$request->file('image');
+        $extension = $file->extension();
+        $randomName = md5(Str::random(5) . now()->toDateTimeString());
+
+        $fileName = "{$randomName}.{$extension}";
+        $product->update(['image' => $fileName]);
+
+        foreach ($this->getStorages() as $storage) {
+
+            Storage::disk($storage)->putFileAs($file, $fileName);
+
+
+
+        }
     }
 
 

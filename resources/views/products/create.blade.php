@@ -8,11 +8,11 @@
       <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-    {{-- @include('back.sidebar') --}}
-{{--    @include('back.messages')--}}
+
+  @include('messages')
 
 
-        <div class="container" style="margin-top: 170x" id="sidebar">
+        <div class="container"  id="sidebar">
           <div class="panel panel-primary">
 
             <div class="panel-heading">افزودن محصول</div>
@@ -22,17 +22,23 @@
               <form action="{{route('products.store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
-                  <label for="name">عنوان محصول </label>
-                  <input type="text" class="form-control  @error('title') is-invalid @enderror" id="title"  name="title"  value="{{old('title')}}" />
+                  <label for="name">نام</label>
+                  <input type="text" class="form-control  @error('title') is-invalid @enderror" id="name"  name="name"  value="{{old('name')}}" />
                 </div>
-                <div class="form-group">
-                  <label for="k">نوع</label>
-                  <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"  name="price"  value="{{old('price')}}"  />
-                </div>
+                  <div class="form-group">
+                      <label for="type">نوع</label>
+                      <input type="text" class="form-control  @error('title') is-invalid @enderror" id="type"  name="type"  value="{{old('type')}}" />
+                  </div>
+                  <div class="form-group">
+                      <label for="slug">slug </label>
+                      <input type="text" class="form-control  @error('slug') is-invalid @enderror" id="slug"  name="slug"  value="{{old('slug')}}" />
+                  </div>
+
                 <div class="form-group">
                   <label for="title">انتخاب دسته بندی</label>
                   <div id="output"></div>
-                  <select class="chosen-select" name="categories"  style="width:400px">
+                  <select class="chosen-select" name="category_id"  style="width:400px">
+                      <option value="1">1</option>
 {{--                      @foreach ($categories as $cat_id => $cat_name)--}}
 {{--                      <option value="{{$cat_id}}">{{$cat_name}}</option>--}}
 {{--                      @endforeach--}}
@@ -42,8 +48,8 @@
 
               </div>
               <div class="form-group">
-                <label for="price">انتخاب تصویر</label>
-                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"  name="im"  value="{{old('image')}}"  />
+                <label for="image">انتخاب تصویر</label>
+                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"  name="image"/>
               </div>
 <hr>
                 <div class="form-group">
