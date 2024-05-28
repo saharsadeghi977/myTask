@@ -39,9 +39,10 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $files = (new FileRepository())->upload('image', ['public']);
-        $product = Product::query()->create($request->validated());
-        return redirect()->route('products');
+          $files = (new FileRepository())->upload('image', ['public']);
+          $product = Product::query()->create($request->validated());
+
+          return redirect()->route('products');
     }
 
     /**

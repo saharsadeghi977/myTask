@@ -14,16 +14,15 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
-            $table->enum('type',['image','document','video','audio',]);
-            $table->string('file_name');
+            $table->enum('type', ['image', 'document', 'video', 'audio',]);
             $table->string('path');
             $table->string('storage');
-            $table->morphs('fileable');
             $table->timestamps();
 
 
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -31,5 +30,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('files');
+
     }
 };

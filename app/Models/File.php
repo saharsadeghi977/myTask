@@ -10,8 +10,11 @@ class File extends Model
     protected $fillable=[
         'title',
         'type',
+        'storage',
         'path',
-        ''
+
+
+
     ];
 
     use HasFactory;

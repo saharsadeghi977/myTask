@@ -2,11 +2,10 @@
 
 namespace App\Http\Services;
 
-use App\Http\Requests\ValidationFileRequest;
 use App\Exceptions\UndefinedStoragesException;
-use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
 
@@ -57,7 +56,11 @@ class AttachmentService
 
     public function uploadFiles(array $files): array
     {
-        return array_map([$this, 'uploadFile'], $files);
+        $uploaded = [];
+        foreach ($files as $file){
+            $uploaded += $this->uploadFile($file);
+        }
+        return $uploaded;
     }
 
     /**
@@ -66,10 +69,10 @@ class AttachmentService
      * @throws Throwable
      */
 
-    public function uploadFile($file): array
+    public function uploadFile(UploadedFile $file): array
     {
         $uploadedFiles = [];
-        $extension = $file->extension();
+        $extension = $file->guessExtension();
         $randomName = md5(Str::random(5) . now()->toDateTimeString());
         $fileName = "{$randomName}.{$extension}";
         foreach ($this->getStorages() as $storage) {
@@ -77,6 +80,7 @@ class AttachmentService
                 'storage' => $storage,
                 'path' => Storage::disk($storage)->putFileAs($file, $fileName),
                 'extension' => $extension,
+                'mime' => $file->getMimeType(),
             ];
         }
         return $uploadedFiles;

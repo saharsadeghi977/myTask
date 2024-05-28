@@ -14,6 +14,6 @@ class Product extends Model
         return $this->belongsTo(Product::class);
     }
     public function files(){
-        return $this->morphMany(File::class,'morphable');
+        return $this->morphtoMany(File::class,'morphable');
     }
 }
