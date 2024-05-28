@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Repositories\FileRepository;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
@@ -28,7 +29,7 @@ class ProductController extends Controller
     public function create()
     {
         //
-        $product=new product();
+        $product = new product();
         return view('products.create');
 
     }
@@ -38,15 +39,9 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $product=Product::query()->create($request->validated());
-        $attachmentServices=AttachmentService::instance();
-        $savedFiles=$attachmentServices->uploadFile($request->files);
-        $fileRepository=new FileRepository();
-        foreach ($savedFiles as $file){
-            $fileRepository->create();
-        }
-        return redirect(route('products',['product'=>$product->slug]));
-
+        $files = (new FileRepository())->upload('image', ['public']);
+        $product = Product::query()->create($request->validated());
+        return redirect()->route('products');
     }
 
     /**
@@ -85,14 +80,12 @@ class ProductController extends Controller
 //        }
 
 
-
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(product $product)
     {
-      $product->delete();
-      return redirect()->route('products.products');
+        $product->delete();
+        return redirect()->route('products.products');
     }
 }

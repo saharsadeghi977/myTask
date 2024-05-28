@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services;
+
 use App\Http\Requests\ValidationFileRequest;
 use App\Exceptions\UndefinedStoragesException;
 use App\Models\File;
@@ -19,8 +20,7 @@ class AttachmentService
     /**
      * @var array
      */
-    private array $storages=['public'];
-
+    private array $storages;
 
 
     /**
@@ -47,7 +47,7 @@ class AttachmentService
         $storages = $this->getStorages();
 
         foreach ($storages as $storage) {
-           $storageDisk = Storage::disk($storage);
+            $storageDisk = Storage::disk($storage);
 
             $deleteLog = $storageDisk->exists($file) && $storageDisk->delete($file);
         }
@@ -57,31 +57,29 @@ class AttachmentService
 
     public function uploadFiles(array $files): array
     {
-     return array_map([$this,'uploadFile'],$files);
+        return array_map([$this, 'uploadFile'], $files);
     }
 
     /**
-     * @param $request
+     * @param $file
+     * @return array
      * @throws Throwable
      */
 
-    public function uploadFile( ValidationFileRequest $request,$product):void
+    public function uploadFile($file): array
     {
-
-        $file=$request->file('image');
+        $uploadedFiles = [];
         $extension = $file->extension();
         $randomName = md5(Str::random(5) . now()->toDateTimeString());
-
         $fileName = "{$randomName}.{$extension}";
-        $product->update(['image' => $fileName]);
-
         foreach ($this->getStorages() as $storage) {
-
-            Storage::disk($storage)->putFileAs($file, $fileName);
-
-
-
+            $uploadedFiles[] = [
+                'storage' => $storage,
+                'path' => Storage::disk($storage)->putFileAs($file, $fileName),
+                'extension' => $extension,
+            ];
         }
+        return $uploadedFiles;
     }
 
 
