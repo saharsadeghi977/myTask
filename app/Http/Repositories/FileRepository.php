@@ -21,16 +21,16 @@ class FileRepository
         $uploadedFiles = AttachmentService::instance()
             ->setStorages($storages)
             ->uploadFiles($files);
-        $insertData = [];
+        $created = [];
         foreach ($uploadedFiles as $file) {
-            $insertData[]=[
+            $created[] = File::create([
                 'path' => $file['path'],
                 'storage' => $file['storage'],
-
-            ];
+                'entry' => [
+                    'extension' => $file['extension']
+                ]
+            ]);
         }
-        File::insert($insertData);
-        $fileRecords=File::whereIn('path',array_column($uploadedFiles,'path'))->get()->all();
-        return $fileRecords;
+        return $created;
     }
 }

@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class File extends Model
 {
-    protected $fillable=[
+    protected $fillable = [
         'title',
         'type',
         'storage',
         'path',
-
-
-
+        'entry',
     ];
 
     use HasFactory;
-    public function morphable(){
-        return $this->morphTo();
+
+    public function products()
+    {
+        return $this->morphToMany(Product::class, 'fileable');
     }
 }

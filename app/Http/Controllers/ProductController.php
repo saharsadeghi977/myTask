@@ -41,6 +41,11 @@ class ProductController extends Controller
     {
           $files = (new FileRepository())->upload('image', ['public']);
           $product = Product::query()->create($request->validated());
+          foreach($files as $file){
+              $product->morphToMany(File::class, $file);
+
+          }
+//
 
           return redirect()->route('products');
     }
