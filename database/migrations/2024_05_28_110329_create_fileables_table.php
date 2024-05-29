@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('filables', function (Blueprint $table){
+        Schema::create('fileables', function (Blueprint $table){
+            $table->id();
             $table->unsignedinteger('file_id');
             $table->unsignedinteger('fileable_id');
             $table->string('fileable_type');

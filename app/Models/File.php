@@ -17,6 +17,10 @@ class File extends Model
 
     use HasFactory;
 
+    protected $casts=[
+      'entry'=>'array',
+    ];
+
     public function products()
     {
         return $this->morphToMany(Product::class, 'fileable');

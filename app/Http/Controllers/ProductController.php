@@ -40,9 +40,9 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
           $files = (new FileRepository())->upload('image', ['public']);
-          $product = Product::query()->create($request->validated());
+          $product = Product::create($request->validated());
           foreach($files as $file){
-              $product->morphToMany(File::class, $file);
+            $product->files()->attach($file->id);
 
           }
 //

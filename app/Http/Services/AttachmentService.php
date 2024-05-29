@@ -74,7 +74,7 @@ class AttachmentService
         $uploadedFiles = [];
         $extension = $file->guessExtension();
         $randomName = md5(Str::random(5) . now()->toDateTimeString());
-        $fileName = "{$randomName}.{$extension}";
+        $fileName = "{$randomName}";
         foreach ($this->getStorages() as $storage) {
             $uploadedFiles[] = [
                 'storage' => $storage,

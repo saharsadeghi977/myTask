@@ -26,6 +26,7 @@ class FileRepository
             $created[] = File::create([
                 'path' => $file['path'],
                 'storage' => $file['storage'],
+                'type'=>$file['mime'],
                 'entry' => [
                     'extension' => $file['extension']
                 ]
