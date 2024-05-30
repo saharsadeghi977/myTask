@@ -42,7 +42,7 @@ class ProductController extends Controller
           $files = (new FileRepository())->upload('image', ['public']);
           $product = Product::create($request->validated());
           foreach($files as $file){
-            $product->files()->attach($file->id);
+            $product->files()->attach($file);
 
           }
 //

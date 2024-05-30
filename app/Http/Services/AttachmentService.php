@@ -57,8 +57,13 @@ class AttachmentService
     public function uploadFiles(array $files): array
     {
         $uploaded = [];
-        foreach ($files as $file){
-            $uploaded += $this->uploadFile($file);
+        $hashes=[];
+        foreach ($files as $file) {
+            $contentHash = md5_file($file->getRealpath());
+            if (!in_array($contentHash, $hashes)) {
+                $uploaded += $this->uploadFile($file);
+                $hashes[]=$contentHash;
+            }
         }
         return $uploaded;
     }
@@ -73,18 +78,32 @@ class AttachmentService
     {
         $uploadedFiles = [];
         $extension = $file->guessExtension();
+        $contentHash = md5_file($file->getRealPath());
         $randomName = md5(Str::random(5) . now()->toDateTimeString());
-        $fileName = "{$randomName}";
+        $fileName = "{$contentHash}_{$randomName}";
         foreach ($this->getStorages() as $storage) {
-            $uploadedFiles[] = [
-                'storage' => $storage,
-                'path' => Storage::disk($storage)->putFileAs($file, $fileName),
-                'extension' => $extension,
-                'mime' => $file->getMimeType(),
-            ];
+            $existingFilepath = $this->findExistingFile($storage, $contentHash);
+            if ($existingFilepath) {
+                $uploadedFiles[] = [
+                    'storage' => $storage,
+                    'path' => $existingFilepath,
+                    'extension' => $extension,
+                    'mime' => $file->getMimeType(),
+                ];
+            } else {
+                $filePath = Storage::disk($storage)->putFileAs('', $file, $fileName);
+                $uploadedFiles[] = [
+                    'storage' => $storage,
+                    'path' => $filePath,
+                    'extension' => $extension,
+                    'mime' => $file->getMimeType(),
+                ];
+
+            }
         }
-        return $uploadedFiles;
-    }
+            return $uploadedFiles;
+        }
+
 
 
     /**
