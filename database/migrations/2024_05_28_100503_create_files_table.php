@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->string('type')->nullable();
-            $table->string('path');
+            $table->string('path')->unique();
             $table->string('storage');
             $table->json('entry')->nullable();
             $table->timestamps();

@@ -57,12 +57,12 @@ class AttachmentService
     public function uploadFiles(array $files): array
     {
         $uploaded = [];
-        $hashes=[];
+        $hashes = [];
         foreach ($files as $file) {
             $contentHash = md5_file($file->getRealpath());
             if (!in_array($contentHash, $hashes)) {
                 $uploaded += $this->uploadFile($file);
-                $hashes[]=$contentHash;
+                $hashes[] = $contentHash;
             }
         }
         return $uploaded;
@@ -79,31 +79,20 @@ class AttachmentService
         $uploadedFiles = [];
         $extension = $file->guessExtension();
         $contentHash = md5_file($file->getRealPath());
-        $randomName = md5(Str::random(5) . now()->toDateTimeString());
-        $fileName = "{$contentHash}_{$randomName}";
+        $filesize=filesize($contentHash);
+        dd($filesize);
+        $fileName = "{$contentHash}.{$extension}";
         foreach ($this->getStorages() as $storage) {
-            $existingFilepath = $this->findExistingFile($storage, $contentHash);
-            if ($existingFilepath) {
                 $uploadedFiles[] = [
                     'storage' => $storage,
-                    'path' => $existingFilepath,
+                    'path' => $fileName,
                     'extension' => $extension,
                     'mime' => $file->getMimeType(),
                 ];
-            } else {
-                $filePath = Storage::disk($storage)->putFileAs('', $file, $fileName);
-                $uploadedFiles[] = [
-                    'storage' => $storage,
-                    'path' => $filePath,
-                    'extension' => $extension,
-                    'mime' => $file->getMimeType(),
-                ];
-
             }
-        }
             return $uploadedFiles;
-        }
 
+        }
 
 
     /**

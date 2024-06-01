@@ -28,7 +28,9 @@ class FileRepository
                 'storage' => $file['storage'],
                 'type'=>$file['mime'],
                 'entry' => [
-                    'extension' => $file['extension']
+                    'extension' => $file['extension'],
+                    'filesize'=>$file['size'],
+
                 ]
             ]);
         }
