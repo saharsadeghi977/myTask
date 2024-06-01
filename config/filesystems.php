@@ -24,7 +24,7 @@ return [
     | may even configure multiple disks for the same driver. Examples for
     | most supported storage drivers are configured here for reference.
     |
-    | Supported Drivers: "local", "ftp", "sftp", "s3"
+    | Supported Drivers: "local", "ftp", "sftp", "private"
     |
     */
 
@@ -43,9 +43,14 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'private'=>[
+            'driver'=>'local',
+            'root'=>storage_path('app/public'),
+            'visibility'=>'private'
+        ],
 
         's3' => [
-            'driver' => 's3',
+            'driver' => 'private',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),

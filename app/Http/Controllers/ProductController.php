@@ -39,10 +39,10 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-          $files = (new FileRepository())->upload('image', ['public']);
+          $files = (new FileRepository())->upload('image', ['public','private']);
           $product = Product::create($request->validated());
           foreach($files as $file){
-            $product->files()->attach($file);
+           $product->files()->attach($file);
 
           }
 //
@@ -71,7 +71,7 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
 //    public function update(UpdateProductRequest $request, Product $product)
-//    {   $attachmentService = AttachmentService::getInstance('default',['local','s3']);
+//    {   $attachmentService = AttachmentService::getInstance('default',['local','private']);
 //        $product->update($request->validated());
 //
 //        if(!$request->hasFile('files')){

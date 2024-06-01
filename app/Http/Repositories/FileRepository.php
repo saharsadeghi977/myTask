@@ -6,6 +6,7 @@ use App\Http\Services\AttachmentService;
 use App\Models\File;
 use Collectable;
 use Countable;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -23,6 +24,7 @@ class FileRepository
             ->uploadFiles($files);
         $created = [];
         foreach ($uploadedFiles as $file) {
+            try{
             $created[] = File::create([
                 'path' => $file['path'],
                 'storage' => $file['storage'],
@@ -33,6 +35,9 @@ class FileRepository
 
                 ]
             ]);
+        }catch(QueryException $e){
+
+            }
         }
         return $created;
     }

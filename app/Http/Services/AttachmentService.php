@@ -79,15 +79,16 @@ class AttachmentService
         $uploadedFiles = [];
         $extension = $file->guessExtension();
         $contentHash = md5_file($file->getRealPath());
-        $filesize=filesize($contentHash);
-        dd($filesize);
+        $filesize=filesize($file->getRealPath());
         $fileName = "{$contentHash}.{$extension}";
         foreach ($this->getStorages() as $storage) {
+           $filePath=Storage::disk($storage)->putFileAs($file, $fileName);
                 $uploadedFiles[] = [
                     'storage' => $storage,
-                    'path' => $fileName,
+                    'path' =>$filePath ,
                     'extension' => $extension,
                     'mime' => $file->getMimeType(),
+                    'size'=>$filesize,
                 ];
             }
             return $uploadedFiles;

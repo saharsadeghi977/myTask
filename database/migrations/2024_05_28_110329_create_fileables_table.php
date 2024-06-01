@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('fileables', function (Blueprint $table){
             $table->id();
-            $table->unsignedinteger('file_id');
+            $table->foreignId('file_id')->constrained()->cascadeOnDelete();
             $table->unsignedinteger('fileable_id');
             $table->string('fileable_type');
             $table->timestamps();
-
-            $table->unique(['file_id', 'fileable_id', 'fileable_type']);
 
         });
     }
