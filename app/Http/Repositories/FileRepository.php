@@ -4,10 +4,6 @@ namespace App\Http\Repositories;
 
 use App\Http\Services\AttachmentService;
 use App\Models\File;
-use Collectable;
-use Countable;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileRepository
@@ -23,22 +19,24 @@ class FileRepository
             ->setStorages($storages)
             ->uploadFiles($files);
         $created = [];
+
         foreach ($uploadedFiles as $file) {
-            try{
-            $created[] = File::create([
-                'path' => $file['path'],
-                'storage' => $file['storage'],
-                'type'=>$file['mime'],
-                'entry' => [
-                    'extension' => $file['extension'],
-                    'filesize'=>$file['size'],
-
-                ]
-            ]);
-        }catch(QueryException $e){
-
+            $existingFile = File::query()->where('hash', $file['hash'])->first();
+            if ($existingFile) {
+                $created[] = $existingFile;
+            } else {
+                $createdFile = File::create([
+                    'path' => $file['path'],
+                    'storage' => $file['storage'],
+                    'type' => $file['mime'],
+                    'hash' => $file['hash'],
+                    'entry' => $file
+                ]);
+                $created[] = $createdFile;
             }
         }
+
+
         return $created;
     }
 }

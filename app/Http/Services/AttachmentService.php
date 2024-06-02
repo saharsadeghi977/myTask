@@ -48,7 +48,7 @@ class AttachmentService
         foreach ($storages as $storage) {
             $storageDisk = Storage::disk($storage);
 
-            $deleteLog = $storageDisk->exists($file) && $storageDisk->delete($file);
+            $storageDisk->exists($file) && $storageDisk->delete($file);
         }
 
         return true;
@@ -57,19 +57,16 @@ class AttachmentService
     public function uploadFiles(array $files): array
     {
         $uploaded = [];
-        $hashes = [];
+
         foreach ($files as $file) {
-            $contentHash = md5_file($file->getRealpath());
-            if (!in_array($contentHash, $hashes)) {
-                $uploaded += $this->uploadFile($file);
-                $hashes[] = $contentHash;
-            }
+
+            $uploaded += $this->uploadFile($file);
         }
         return $uploaded;
     }
 
     /**
-     * @param $file
+     * @param UploadedFile $file
      * @return array
      * @throws Throwable
      */
@@ -79,24 +76,25 @@ class AttachmentService
         $uploadedFiles = [];
         $extension = $file->guessExtension();
         $contentHash = md5_file($file->getRealPath());
-        $filesize=filesize($file->getRealPath());
-        $fileName = "{$contentHash}.{$extension}";
+        $filesize = filesize($file->getRealPath());
+        $fileName = date("Y/m/d/") . "{$contentHash}.{$extension}";
         foreach ($this->getStorages() as $storage) {
-           $filePath=Storage::disk($storage)->putFileAs($file, $fileName);
-                $uploadedFiles[] = [
-                    'storage' => $storage,
-                    'path' =>$filePath ,
-                    'extension' => $extension,
-                    'mime' => $file->getMimeType(),
-                    'size'=>$filesize,
-                ];
-            }
-            return $uploadedFiles;
-
+            $filePath = Storage::disk($storage)->putFileAs($file, $fileName);
+            $uploadedFiles[] = [
+                'storage' => $storage,
+                'path' => $filePath,
+                'extension' => $extension,
+                'hash' => $contentHash,
+                'mime' => $file->getMimeType(),
+                'size' => $filesize,
+            ];
         }
+        return $uploadedFiles;
+
+    }
 
 
-    /**
+    /**@return array
      * @throws Throwable
      */
     public function getStorages(): array

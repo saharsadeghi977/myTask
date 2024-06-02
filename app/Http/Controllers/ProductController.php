@@ -18,7 +18,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest()->paginate(5);
+        $products = Product::query()
+            ->with(['files'])
+            ->latest()
+            ->paginate(5);
 
         return view('products.products', compact('products'));
     }
@@ -39,15 +42,12 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-          $files = (new FileRepository())->upload('image', ['public','private']);
-          $product = Product::create($request->validated());
-          foreach($files as $file){
-           $product->files()->attach($file);
-
-          }
-//
-
-          return redirect()->route('products');
+        $files = (new FileRepository())->upload('image', ['public', 'private']);
+        $product = Product::create($request->validated());
+        foreach ($files as $file) {
+            $product->files()->sync($file);
+        }
+        return redirect()->route('products');
     }
 
     /**

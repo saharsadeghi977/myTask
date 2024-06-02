@@ -12,6 +12,7 @@ class File extends Model
         'type',
         'storage',
         'path',
+        'hash',
         'entry',
     ];
 
