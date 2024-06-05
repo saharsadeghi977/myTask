@@ -23,7 +23,7 @@ class ProductController extends Controller
             ->latest()
             ->paginate(5);
 
-        return view('products.products', compact('products'));
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductController extends Controller
         $files = (new FileRepository())->upload('image', ['public', 'private']);
         $product = Product::create($request->validated());
         foreach ($files as $file) {
-            $product->files()->sync($file);
+            $product->files()->attach($file);
         }
         return redirect()->route('products');
     }
@@ -70,20 +70,23 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-//    public function update(UpdateProductRequest $request, Product $product)
-//    {   $attachmentService = AttachmentService::getInstance('default',['local','private']);
-//        $product->update($request->validated());
-//
-//        if(!$request->hasFile('files')){
-//            return false;
-//        }
-//        if ($product->images) {
-//            foreach($product->images as image){
-//                AttachmentService::remove(image);
-//            }
-//        }
-//        AttachmentService::uploadFileRepository($request->file('files'), Product::class, $product->id);
-//        }
+    public function update(UpdateProductRequest $request, Product $product)
+    {
+        $product->update($request->validated());
+
+     if($request->hasFile('image')) {
+         $files = (new FileRepository())->upload('image', ['public', 'private']);
+         foreach ($product->files as $file) {
+//             $this->AttachmentService::delete($file->path);
+             $product->files()->detach($file);
+             $file->delete();
+
+         }
+         $product->files()->attach($file);
+
+     }
+        return redirect()->route('products.index');
+        }
 
 
     /**
@@ -92,6 +95,6 @@ class ProductController extends Controller
     public function destroy(product $product)
     {
         $product->delete();
-        return redirect()->route('products.products');
+        return redirect()->route('products.index');
     }
 }

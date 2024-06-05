@@ -19,7 +19,7 @@ use App\Http\Controllers\productController AS PR;
     Route::get('/create', [PR::class ,'create'])->name('products.create');
     Route::post('/store', [PR::class ,'store'])->name('products.store');
     Route::get('/edit/{products}', [PR::class,'edit'])->name('products.edit');
-    Route::post('/update/{products}', [PR::class,'update'])->name('products.update');
+    Route::put('/update/{products}', [PR::class,'update'])->name('products.update');
     Route::get('/destroy/{products}', [PR::class,'destroy'])->name('products.destroy');
 
 //});

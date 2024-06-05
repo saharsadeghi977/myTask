@@ -27,7 +27,7 @@
 
 
             <div class="panel-body">
-              <form action="{{route('admin.products.update')->$product->id}}" method="POST">
+              <form action="{{route('products.update',$product)}}" method="POST">
                 @csrf
                 <div class="form-group">
                   <label for="title">عنوان محصول </label>
