@@ -27,56 +27,60 @@
 
 
             <div class="panel-body">
-              <form action="{{route('products.update',$product)}}" method="POST">
-                @csrf
-                <div class="form-group">
-                  <label for="title">عنوان محصول </label>
-                  <input type="text" class="form-control  @error('title') is-invalid @enderror" id="title"  name="title"  value="{{$product->title}}" />
-                </div>
-                <div class="form-group">
-                  <label for="price">قیمت</label>
-                  <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"  name="price"  value="{{$product->price}}"  />
-                </div>
-                <div class="form-group">
-                    <label for="title">انتخاب دسته بندی</label>
-                    <div id="output"></div>
-                    <select class="chosen-select" name="categories[]" multiple style="width:400px">
-                        @foreach ($categories as $cat_id => $cat_name)
-                        <option value="{{$cat_id}}" <?php
-                        if (
-                            in_array($cat_id,$product->categories->pluck('id')->toArray()) )echo 'selected'
-                        ?>>{{$cat_name}}</option>
-                        @endforeach
+              <form action="{{route('products.update',['product'=>$product->id])}}" method="POST">
+                  @csrf
+                  @method('put')
+                  <div class="form-group">
+                      <label for="name">نام</label>
+                      <input type="text" class="form-control @error('title') is-invalid @enderror" id="name" name="name" />
 
-                    </select>
-                </div>
-              <div class="input-group">
-                <span class="input-group-btn">
-                    <a href="#" id="lfm" data-input="image" data-preview="holder"
-                        class="btn btn-primary">
-                        <i class="fa fa-picture-o"></i> انتخاب
-                    </a>
-                </span>
-                <input id="image" class="form-control" type="text" name="image" vlue="{{$product->image}}">
-            </div>
-            <img id="holder" style="margin-top:15px;max-height:100px;" src="{{$product->image}}">
-            <hr>
-                <div class="form-group">
-                  <label for="description">توضیحات</label>
-                  <textarea
-                  id="editor" type="text"
-                  class="form-control @error('description') is-invalid @enderror"
-                  name="description">{{$article->description}}
-                  ></textarea>
-                  @error('description')
-                  <div class="alert alert-danger">{{$message}}</div>
-                  @enderror
-                </div>
-                <div class="form-group">
+                      <!-- Loop through the product files and display image paths in hidden inputs -->
+                      @foreach ($product->files as $file)
+                          <input type="hidden" name="file_paths[]" value="{{ asset('storage/' . $file->path) }}" />
+                      @endforeach
 
-                  <button type="submit" class="btn btn-success">ذخیره</button>
-                  <a href="{{route('admin.products')}}" class="btn btn-warning"> انصراف </a>
-              </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="type">نوع</label>
+                      <input type="text" class="form-control  @error('title') is-invalid @enderror" id="type"  name="type"  value="{{$product->type}}" />
+                  </div>
+                  <div class="form-group">
+                      <label for="slug">slug </label>
+                      <input type="text" class="form-control  @error('slug') is-invalid @enderror" id="slug"  name="slug"  value="{{$product->slug}}" />
+                  </div>
+
+                  <div class="form-group">
+                      <label for="title">انتخاب دسته بندی</label>
+                      <div id="output"></div>
+                      <select class="chosen-select" name="category_id"  style="width:400px">
+                          <option value="1">1</option>
+                          {{--                      @foreach ($categories as $cat_id => $cat_name)--}}
+                          {{--                      <option value="{{$cat_id}}">{{$cat_name}}</option>--}}
+                          {{--                      @endforeach--}}
+
+                      </select>
+
+
+                  </div>
+                  <div class="form-group">
+                      <label for="image">انتخاب تصویر</label>
+                      <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"  name="image" value="{{$product->files}}"/>
+                  </div>
+                  <hr>
+                  <div class="form-group">
+                      <label for="body">توضیحات</label>
+                      <textarea
+                          id="body" type="text"
+                          class="form-control @error('description') is-invalid @enderror"
+                          name="description">{{$product->description}}
+                  </textarea>
+                  </div>
+                  <div class="form-group">
+
+                      <button type="submit" class="btn btn-success">ذخیره</button>
+                      <a href="{{route('products')}}" class="btn btn-warning"> انصراف </a>
+                  </div>
+              </form>
               </form>
             </div>
           </div>

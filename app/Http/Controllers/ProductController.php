@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Repositories\FileRepository;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
@@ -9,6 +8,7 @@ use App\Http\Services\AttachmentService;
 use Illuminate\Http\Request;
 use App\Models\category;
 use App\Models\product;
+use App\Models\Fileable;
 use App\Models\File;
 
 class ProductController extends Controller
@@ -45,7 +45,7 @@ class ProductController extends Controller
         $files = (new FileRepository())->upload('image', ['public', 'private']);
         $product = Product::create($request->validated());
         foreach ($files as $file) {
-            $product->files()->attach($file);
+            $product->files()->sync($file);
         }
         return redirect()->route('products');
     }
@@ -72,20 +72,22 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
-
-     if($request->hasFile('image')) {
          $files = (new FileRepository())->upload('image', ['public', 'private']);
-         foreach ($product->files as $file) {
-//             $this->AttachmentService::delete($file->path);
-             $product->files()->detach($file);
-             $file->delete();
+         $product->update($request->validated());
+         foreach ($product->files as $existingFile) {
+             $product->files()->detach($existingFile);
+             $relatedModelsCount=Fileable::query()->where('file_id',$existingFile)->count();
+             if($relatedModelsCount<1) {
+                 AttachmentService::instance()->delete($existingFile->path);
+                 $existingFile->delete();
+             }
 
          }
-         $product->files()->attach($file);
+         foreach($files as $file) {
+             $product->files()->sync($file);
+         }
 
-     }
-        return redirect()->route('products.index');
+        return redirect()->route('products');
         }
 
 

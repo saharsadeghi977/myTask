@@ -11,7 +11,7 @@ class Product extends Model
     protected $fillable = ['name', 'type', 'slug','category_id','description'];
 
     public function category(){
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Category::class);
     }
     public function files(){
         return $this->morphToMany(File::class,'fileable');

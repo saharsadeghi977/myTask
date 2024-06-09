@@ -22,8 +22,8 @@ class File extends Model
       'entry'=>'array',
     ];
 
-    public function products()
+    public function fileables()
     {
-        return $this->morphToMany(Product::class, 'fileable');
+        return $this->morphToMany(Fileable::class, 'fileable');
     }
 }
