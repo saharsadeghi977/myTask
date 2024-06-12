@@ -72,20 +72,27 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-         $files = (new FileRepository())->upload('image', ['public', 'private']);
-         $product->update($request->validated());
-         foreach ($product->files as $existingFile) {
-             $product->files()->detach($existingFile);
-             $relatedModelsCount=Fileable::query()->where('file_id',$existingFile)->count();
-             if($relatedModelsCount<1) {
-                 AttachmentService::instance()->delete($existingFile->path);
-                 $existingFile->delete();
-             }
+        $existingFiles=Fileable::query()->where('fileable_id',$product->id)->pluck('file_id')->toArray();
+        $product->files()->detach($existingFiles);
 
-         }
-         foreach($files as $file) {
-             $product->files()->sync($file);
-         }
+        $files = (new FileRepository())->upload('image', ['public', 'private']);
+        $product->update($request->validated());
+
+        foreach($files as $file) {
+            $product->files()->sync($file);
+        }
+
+        foreach ( $existingFiles as $fileid) {
+            $relatedModelsCount=Fileable::query()->where('file_id',$fileid)->count();
+            if($relatedModelsCount<1) {
+                $file = File::query()->find($fileid);
+                if ($file) {
+                    AttachmentService::instance()->delete($file->path);
+                    $file->delete();
+                }
+            }
+            }
+
 
         return redirect()->route('products');
         }
@@ -96,7 +103,16 @@ class ProductController extends Controller
      */
     public function destroy(product $product)
     {
+        foreach($product->files as $file){
+            $product->files()->detach($file);
+            $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
+            if($relatedModelsCount<1){
+                  AttachmentService::instance()->delete($file->path);
+                   $file->delete();
+
+            }
+    }
         $product->delete();
-        return redirect()->route('products.index');
+        return redirect()->route('products');
     }
 }

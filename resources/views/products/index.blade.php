@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="{{ url('assets/css/bootstrap-rtl.css') }}">
   </head>
   <body>
     {{-- @include('back.sidebar') --}}
@@ -22,9 +22,7 @@
 
                         <td style="padding-block: 10px;text-align: center;">نوع</td>
                         <td style="padding-block: 10px;text-align: center;">تصویر</td>
-
                         <td style="padding-block: 10px;text-align: center;">توضیحات</td>
-
 
                     </tr>
                     </thead>
@@ -34,7 +32,7 @@
                         <tr style="padding-block: 10px;border-bottom: 1px solid rgb(196, 196, 196);">
 
                             <td style="padding-block: 10px;text-align: center;">{{$product->name}}</td>
-                            <td style="padding-block: 10px;text-align: center;">{{$product->title}}</td>
+                            <td style="padding-block: 10px;text-align: center;">{{$product->type}}</td>
                             <td style="padding-block: 10px;text-align: center;">
                                 @foreach($product->files as $file)
                                     <img src="{{asset('storage/'.$file->path)}}">
@@ -45,14 +43,16 @@
                                     <span class="badge badge-warning">{{$category}}</span>
                                 @endforeach
                             </td>
+                            <td style="padding-block: 10px;text-align: center;">{{$product->description}}</td>
                             <td style="padding-block: 10px;text-align: center;"><a
                                         href="{{route('products.edit',$product->id)}}"
                                         class="badge badge-success">ویرایش</a>
-                                <a href="{{route('products.destroy',$product->id)}}"
-                                   onclick="return confirm('آیا آیتم مورد نظر حذف شود');"
-                                   class="badge badge-warning"> حذف </a></td>
-
-
+                            <form action="{{route('products.destroy',$product->id)}}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="badge badge-warning" onclick="return confirm('آیا ایتم مورد نظر حذف شود');">حذف</button>
+                            </form>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -5,40 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
-      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="{{ url('assets/css/bootstrap-rtl.css') }}">
 
   </head>
   <body>
-    <div style="display: flex">
-      <div
-        style="
-          height: 100vh;
-          width: 300px;
-          background-color: #428bca;
-          color: white;
-        "
-      >
-
-        @include('messages')
-        <div class="container" style="margin-top: 170x" id="sidebar">
-          <div class="panel panel-primary">
-
-            <div class="panel-heading">ویرایش محصول</div>
+  @include('messages')
 
 
-            <div class="panel-body">
-              <form action="{{route('products.update',['product'=>$product->id])}}" method="POST">
+  <div class="container"  id="sidebar">
+      <div class="panel panel-primary">
+
+          <div class="panel-heading">ویرایش محصول</div>
+
+
+          <div class="panel-body">
+              <form action="{{route('products.update',['product'=>$product->id])}}" method="POST" enctype="multipart/form-data">
                   @csrf
                   @method('put')
                   <div class="form-group">
                       <label for="name">نام</label>
-                      <input type="text" class="form-control @error('title') is-invalid @enderror" id="name" name="name" />
-
-                      <!-- Loop through the product files and display image paths in hidden inputs -->
-                      @foreach ($product->files as $file)
-                          <input type="hidden" name="file_paths[]" value="{{ asset('storage/' . $file->path) }}" />
-                      @endforeach
-
+                      <input type="text" class="form-control  @error('title') is-invalid @enderror" id="name"  name="name"  value="{{$product->name}}" />
                   </div>
                   <div class="form-group">
                       <label for="type">نوع</label>
@@ -64,7 +50,7 @@
                   </div>
                   <div class="form-group">
                       <label for="image">انتخاب تصویر</label>
-                      <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"  name="image" value="{{$product->files}}"/>
+                      <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"  name="image"/>
                   </div>
                   <hr>
                   <div class="form-group">
@@ -81,12 +67,11 @@
                       <a href="{{route('products')}}" class="btn btn-warning"> انصراف </a>
                   </div>
               </form>
-              </form>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
+  </div>
+  </div>
+  </div>
     <script src="../../assets/scripts/jquery-1.10.2.min.js"></script>
     <script src="../../assets/scripts/bootstrap-rtl.js"></script>
   </body>
