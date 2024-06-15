@@ -81,7 +81,6 @@ class ProductController extends Controller
         foreach($files as $file) {
             $product->files()->sync($file);
         }
-
         foreach ( $existingFiles as $fileid) {
             $relatedModelsCount=Fileable::query()->where('file_id',$fileid)->count();
             if($relatedModelsCount<1) {
@@ -93,26 +92,25 @@ class ProductController extends Controller
             }
             }
 
-
         return redirect()->route('products');
         }
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(product $product)
     {
-        foreach($product->files as $file){
-            $product->files()->detach($file);
+        $files=$product->files;
+        $product->files()->detach();
+        $product->delete();
+        foreach($files as $file){
             $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
             if($relatedModelsCount<1){
+                $file->delete();
                   AttachmentService::instance()->delete($file->path);
-                   $file->delete();
-
             }
     }
-        $product->delete();
         return redirect()->route('products');
     }
 }
+
