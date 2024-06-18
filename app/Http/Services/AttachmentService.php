@@ -42,13 +42,21 @@ class AttachmentService
         if (blank($file)) {
             return false;
         }
+        $hash=$file->hash;
 
-        $storages = $this->getStorages();
+        $storagestring = $this->getStorages($file);
+        $storages=explode(',',$storagestring);
 
         foreach ($storages as $storage) {
             $storageDisk = Storage::disk($storage);
+            $files=$storageDisk->files();
 
-            $storageDisk->exists($file) && $storageDisk->delete($file);
+           foreach ($files as $file){
+              if(strpos($file,$hash)!==false){
+                  $storageDisk->delete($file);
+              }
+           }
+
         }
 
         return true;

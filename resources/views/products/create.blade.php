@@ -63,7 +63,7 @@
                 <div class="form-group">
 
                   <button type="submit" class="btn btn-success">ذخیره</button>
-                  <a href="{{route('products')}}" class="btn btn-warning"> انصراف </a>
+                  <a href="{{route('products.index')}}" class="btn btn-warning"> انصراف </a>
               </div>
               </form>
             </div>

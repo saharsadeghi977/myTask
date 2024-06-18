@@ -20,7 +20,9 @@ class File extends Model
 
     protected $casts=[
       'entry'=>'array',
+        'storage'=>'array'
     ];
+
 
     public function fileables()
     {

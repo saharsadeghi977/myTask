@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('path')->unique();
             $table->string('hash')->unique();
-            $table->string('storage');
+            $table->json('storage');
             $table->json('entry')->nullable();
             $table->timestamps();
 

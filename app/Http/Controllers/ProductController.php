@@ -47,7 +47,7 @@ class ProductController extends Controller
         foreach ($files as $file) {
             $product->files()->sync($file);
         }
-        return redirect()->route('products');
+        return redirect()->route('products.index');
     }
 
     /**
@@ -86,13 +86,13 @@ class ProductController extends Controller
             if($relatedModelsCount<1) {
                 $file = File::query()->find($fileid);
                 if ($file) {
-                    AttachmentService::instance()->delete($file->path);
+                    AttachmentService::instance()->delete($file);
                     $file->delete();
                 }
             }
             }
 
-        return redirect()->route('products');
+        return redirect()->route('products.index');
         }
 
     /**
@@ -107,10 +107,10 @@ class ProductController extends Controller
             $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
             if($relatedModelsCount<1){
                 $file->delete();
-                  AttachmentService::instance()->delete($file->path);
+                  AttachmentService::instance()->delete($file);
             }
     }
-        return redirect()->route('products');
+        return redirect()->route('products.index');
     }
 }
 
