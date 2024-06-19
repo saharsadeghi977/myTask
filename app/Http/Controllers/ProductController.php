@@ -72,24 +72,20 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $existingFiles=Fileable::query()->where('fileable_id',$product->id)->pluck('file_id')->toArray();
-        $product->files()->detach($existingFiles);
-
+        $existingFiles=$product->files;
+        $product->files()->detach();
         $files = (new FileRepository())->upload('image', ['public', 'private']);
         $product->update($request->validated());
 
         foreach($files as $file) {
             $product->files()->sync($file);
         }
-        foreach ( $existingFiles as $fileid) {
-            $relatedModelsCount=Fileable::query()->where('file_id',$fileid)->count();
-            if($relatedModelsCount<1) {
-                $file = File::query()->find($fileid);
-                if ($file) {
-                    AttachmentService::instance()->delete($file);
-                    $file->delete();
-                }
-            }
+        foreach($existingFiles as $file){
+        $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
+        if($relatedModelsCount<1){
+            $file->delete();
+            AttachmentService::instance()->delete($file->hash,$file->storage);
+        }
             }
 
         return redirect()->route('products.index');
@@ -107,7 +103,7 @@ class ProductController extends Controller
             $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
             if($relatedModelsCount<1){
                 $file->delete();
-                  AttachmentService::instance()->delete($file);
+                  AttachmentService::instance()->delete($file->hash,$file->storage);
             }
     }
         return redirect()->route('products.index');

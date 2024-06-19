@@ -32,31 +32,36 @@ class AttachmentService
     }
 
     /**
-     * @param string $file
+     * @param string $hash
+     * @param string $storage
      * @return bool
      * @throws Throwable
      */
 
-    public function delete(string $file): bool
+    public function delete(string $hash,string $storage): bool
     {
-        if (blank($file)) {
+        if (blank($hash)) {
             return false;
         }
-        $hash=$file->hash;
 
-        $storagestring = $this->getStorages($file);
-        $storages=explode(',',$storagestring);
-
+        $storages=explode(',',$storage);
         foreach ($storages as $storage) {
             $storageDisk = Storage::disk($storage);
-            $files=$storageDisk->files();
+            $files=$storageDisk->allFiles();
+            $directories=$storageDisk->directories();
 
            foreach ($files as $file){
               if(strpos($file,$hash)!==false){
                   $storageDisk->delete($file);
               }
            }
-
+          foreach ($directories as $directory){
+              $allFiles=$storageDisk->allFiles($directory);
+              $allDirectories=$storageDisk->allDirectories($directory);
+              if(empty($allFiles) && empty($allDirectories)){
+                  $storageDisk->deleteDirectory($directory);
+              }
+          }
         }
 
         return true;
