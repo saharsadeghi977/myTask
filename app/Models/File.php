@@ -10,7 +10,7 @@ class File extends Model
     protected $fillable = [
         'title',
         'type',
-        'storage',
+        'storages',
         'path',
         'hash',
         'entry',
@@ -20,7 +20,7 @@ class File extends Model
 
     protected $casts=[
       'entry'=>'array',
-        'storage'=>'array'
+        'storages'=>'array'
     ];
 
 

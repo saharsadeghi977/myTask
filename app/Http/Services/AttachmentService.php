@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Exceptions\UndefinedStoragesException;
+use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -32,36 +33,21 @@ class AttachmentService
     }
 
     /**
-     * @param string $hash
-     * @param string $storage
+
      * @return bool
      * @throws Throwable
      */
 
-    public function delete(string $hash,string $storage): bool
+    public function delete(File $file): bool
     {
-        if (blank($hash)) {
+        if (blank($file)) {
             return false;
         }
-
-        $storages=explode(',',$storage);
+        $storages = $file->storages;
         foreach ($storages as $storage) {
             $storageDisk = Storage::disk($storage);
-            $files=$storageDisk->allFiles();
-            $directories=$storageDisk->directories();
+            $storageDisk->$storageDisk->delete($file->path);
 
-           foreach ($files as $file){
-              if(strpos($file,$hash)!==false){
-                  $storageDisk->delete($file);
-              }
-           }
-          foreach ($directories as $directory){
-              $allFiles=$storageDisk->allFiles($directory);
-              $allDirectories=$storageDisk->allDirectories($directory);
-              if(empty($allFiles) && empty($allDirectories)){
-                  $storageDisk->deleteDirectory($directory);
-              }
-          }
         }
 
         return true;

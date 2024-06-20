@@ -84,7 +84,7 @@ class ProductController extends Controller
         $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
         if($relatedModelsCount<1){
             $file->delete();
-            AttachmentService::instance()->delete($file->hash,$file->storage);
+            AttachmentService::instance()->delete($file);
         }
             }
 
@@ -103,7 +103,7 @@ class ProductController extends Controller
             $relatedModelsCount=Fileable::query()->where("file_id",$file->id)->count();
             if($relatedModelsCount<1){
                 $file->delete();
-                  AttachmentService::instance()->delete($file->hash,$file->storage);
+                  AttachmentService::instance()->delete($file);
             }
     }
         return redirect()->route('products.index');

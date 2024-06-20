@@ -27,7 +27,7 @@ class FileRepository
             } else {
                 $createdFile = File::create([
                     'path' => $file['path'],
-                    'storage' => implode(',',$storages),
+                    'storages' => $storages,
                     'type' => $file['mime'],
                     'hash' => $file['hash'],
                     'entry' => $file
